@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpine
+  namespace: infrastructure
+  labels:
+    app: alpine-deploy-label
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alpine-pod-label
+  template:
+    metadata:
+      labels:
+        app: alpine-pod-label
+    spec:
+      containers:
+      - name: alpine
+        image: ilittle/alpine-tools:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "500m"
+          requests:
+            memory: 256Mi
+            cpu: "250m"
+        # securityContext:
+        #   runAsUser: 1000
+        #   runAsNonRoot: true
+        #   allowPrivilegeEscalation: false
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      nodeSelector:
+        alpha.eksctl.io/nodegroup-name: Infrastructure
